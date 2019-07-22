@@ -68,74 +68,125 @@
 
 
   <script type="text/javascript">
-    const MAX_PUNTI = 13;
+
+  const MAX_PUNTI = 13;
 
 
-    function aggiornaBarra(percentuale) {
-      document.getElementById("barra").innerHTML = '<div class="progress-bar progress-bar-animated progress-bar-striped" role="progressbar" style="width:' + percentuale + '%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">' + percentuale +'%</div>';
+  function aggiornaBarra(percentuale) {
+    document.getElementById("barra").innerHTML = '<div class="progress-bar progress-bar-animated progress-bar-striped" role="progressbar" style="width:' + percentuale + '%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">' + percentuale +
+      '%</div>';
+  }
+
+  function cambia(id, percentuale) {
+    $(id).tab('show');
+    aggiornaBarra(percentuale);
+  }
+
+
+  function rimuoviRS(nomeRisposte) {
+    var elemento = document.getElementsByName(nomeRisposte);
+    for (var i = 0; i < elemento.length; i++)
+      elemento[i].checked = false;
+  }
+
+  function puntiRSradio(nomeRisposte, rispEsatta) {
+    var radio = document.getElementsByName(nomeRisposte);
+    var risp = "";
+    for (var i = 0; i < radio.length; i++) {
+      if (radio[i].checked) {
+        risp = radio[i].value;
+        break;
+      }
     }
+    var punti;
+    if (risp == "")
+      punti = 0;
+    else if (risp == rispEsatta)
+      punti = 1;
+    else
+      punti = -0.25;
 
-    function cambia(id, percentuale) {
-      $(id).tab('show');
-      aggiornaBarra(percentuale);
-    }
+    return punti
+  }
 
-
-    function rimuoviRS(nomeRisposte) {
-      var radio = document.getElementsByName(nomeRisposte);
-      for (var i = 0; i < radio.length; i++)
-        radio[i].checked = false;
-    }
-
-    function puntiRSradio(nomeRisposte, rispEsatta) {
-      var radio = document.getElementsByName(nomeRisposte);
-      var risp = "";
-      for (var i = 0; i < radio.length; i++) {
-        if (radio[i].checked) {
-          risp = radio[i].value;
-          break;
+  function puntiRScheckbox(nomeRisposte, rispEsatta) {
+    var risposte = rispEsatta.split("-");
+    var alternative = 5;
+    var checkbox = document.getElementsByName(nomeRisposte);
+    var corrette = 0;
+    var sbagliate = 0;
+    var nulla = 0;
+    for (var i = 0; i < checkbox.length; i++) {
+      if (checkbox[i].checked) {
+        var errata = true;
+        for (var j = 0; j < risposte.length; j++) {
+          if (checkbox[i].value == risposte[j]) {
+            corrette++;
+            errata = false;
+          }
         }
+        if (errata == true)
+          sbagliate++;
       }
-      var punti;
-      if (risp == "")
-        punti = 0;
-      else if (risp == rispEsatta)
-        punti = 1;
       else
-        punti = -0.25;
+        nulla++;
+    }
+    var punti;
+    //Se non ha risposto
+    if (nulla == alternative)
+      punti = 0;
+    //Risposte entrambe corrette
+    else if (corrette == 2 && sbagliate == 0)
+      punti = 1.5;
+    //Una Risp Corretta
+    else if (corrette == 2 && sbagliate == 1 || corrette == 1 && sbagliate == 1)
+      punti = 1;
+    //Due Errori
+    else if (corrette == 2 && sbagliate == 2 || corrette == 1 && sbagliate == 2)
+      punti = 0.5;
+    //Piu' errori
+    else
+      punti = -0.25
+    return punti
+  }
 
-      return punti
+
+
+  function valuta() {
+
+    var totale = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    var nomeRisposteRadio = ["r1", "r2", "r3", "r4"];
+    var rispRadio = ["C", "D", "B", "B"];
+    var nomeRisposteCheck = ["c1", "c2", "c3", "c4"];
+    var rispCheck = ["A-C", "A-B", "B-D", "B-E"];
+
+    for (var i = 0; i < nomeRisposteRadio.length; i++) {
+      totale[i] = puntiRSradio(nomeRisposteRadio[i], rispRadio[i]);
     }
 
-    function valuta() {
-
-      var totale = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-      var nomeRisposte = ["r1", "r2", "r3", "r4", "", "", "", "", "", ""];
-      var risp = ["C", "D", "B", "B", "", "", "", "", "", ""];
-
-      for (var i = 0; i < totale.length; i++) {
-        totale[i] = puntiRSradio(nomeRisposte[i], risp[i]);
-      }
-
-      var promosso;
-      var punteggio = 0;
-      for (var i = 0; i < totale.length; i++)
-        punteggio += totale[i];
-      if (punteggio >= 7)
-        promosso = true;
-      else
-        promosso = false;
-      var v = document.getElementById("visore");
-      if (promosso) {
-        v.innerHTML = "<p>Punteggio ottenuto: <strong>" + punteggio + "/" + MAX_PUNTI + "</strong></p> <p> Test Superato!</p>";
-        $('#dialogo').modal('show'); // Istruzione JQuery
-      }
-      if (!promosso) {
-        v.innerHTML = "<p>Punteggio ottenuto: <strong>" + punteggio + "/" + MAX_PUNTI + "</strong></p> <p> Test non superato, Riprova!</p>";
-        $('#dialogo').modal('show'); // Istruzione JQuery
-      }
+    for (var i = 0; i < nomeRisposteCheck.length; i++) {
+      totale[i + 4] = puntiRScheckbox(nomeRisposteCheck[i], rispCheck[i]);
     }
-  </script>
+
+    var promosso;
+    var punteggio = 0;
+    for (var i = 0; i < totale.length; i++)
+      punteggio += totale[i];
+    if (punteggio >= 7)
+      promosso = true;
+    else
+      promosso = false;
+    var v = document.getElementById("visore");
+    if (promosso) {
+      v.innerHTML = "<p>Punteggio ottenuto: <strong>" + punteggio + "/" + MAX_PUNTI + "</strong></p> <p> Test Superato!</p>";
+      $('#dialogo').modal('show'); // Istruzione JQuery
+    }
+    if (!promosso) {
+      v.innerHTML = "<p>Punteggio ottenuto: <strong>" + punteggio + "/" + MAX_PUNTI + "</strong></p> <p> Test non superato, Riprova!</p>";
+      $('#dialogo').modal('show'); // Istruzione JQuery
+    }
+  }
+</script>
 
 
 </head>
@@ -259,7 +310,7 @@
             <!--Quesito 2-->
             <h3 class="text-center"><b>Quesito n.2</b></h3>
             <p class="text-center">
-              Osserva il seguente codice: Quale linguaggio di programmazione e' stato utilizzato in questo programma?<br />
+              Osserva il seguente codice: Quale linguaggio di programmazione è stato utilizzato in questo programma?<br />
             </p>
             <ol style="margin-left: 60px;margin-right: 60px;font-size:15px">
               <li style="font-weight: normal; vertical-align: top;">
@@ -449,30 +500,29 @@
 
 
             <p class="text-center">
-              Dato un Database con una tabella T, qual è il codice SQL corretto
-              per selezionare tutti record presenti nella tabella?
+              Quali delle Seguenti scritture rappresentano correttamente un codice JavaScript Embedded? (Due Risposte)
             </p>
             <hr>
             <table class="tab-risposte">
               <tr>
-                <td><input type="radio" name="r4" value="A" /></td>
-                <td>SELECT ALL FROM T; </td>
+                <td><input type="checkbox" name="c1" value="A" /></td>
+                <td>&lt;script&gt;<em> ... codice javascript ... </em>&lt;/script&gt;</td>
               </tr>
               <tr>
-                <td><input type="radio" name="r4" value="B" /></td>
-                <td>SELECT * FROM T;</td>
+                <td><input type="checkbox" name="c1" value="B" /></td>
+                <td>&lt;javascript&gt;<em> ... codice javascript ... </em>&lt;/javascript&gt;</td>
               </tr>
               <tr>
-                <td><input type="radio" name="r4" value="C" /></td>
-                <td>SELECT EVERYTHING FROM T;</td>
+                <td><input type="checkbox" name="c1" value="C" /></td>
+                <td>&lt;script type="text/javascript"&gt;<em> ... codice javascript ... </em>&lt;/script&gt;</td>
               </tr>
               <tr>
-                <td><input type="radio" name="r4" value="D" /></td>
-                <td>SELECT RECORDS FROM T;</td>
+                <td><input type="checkbox" name="c1" value="D" /></td>
+                <td>&lt;script text ="javascript"&gt;<em> ... codice javascript ... </em>&lt;/script&gt;</td>
               </tr>
               <tr>
-                <td><input type="radio" name="r4" value="E" /></td>
-                <td>SELECT \ FROM T;</td>
+                <td><input type="checkbox" name="c1" value="E" /></td>
+                <td>&lt;script src="mioscript.js"&gt;<em> ... codice javascript ... </em>&lt;/script&gt;</td>
               </tr>
               <tr>
                 <td><br><br><br><br><br><br><br><br></td>
@@ -481,7 +531,7 @@
             <br />
 
             <div class="nonrispondo" id="test">
-              <button class="btn btn-outline-secondary btn-lg" onclick="rimuoviRS('r4');">
+              <button class="btn btn-outline-secondary btn-lg" onclick="rimuoviRS('c1');">
                 Non rispondo
               </button>
               <button class="btn btn-outline-primary btn-lg" onclick="cambia('#quesitotab4',30);">
@@ -498,30 +548,29 @@
 
 
             <p class="text-center">
-              Dato un Database con una tabella T, qual è il codice SQL corretto
-              per selezionare tutti record presenti nella tabella?
+              Quali numeri può restituire la funzione Math.Random() in JavaScript? (Due Risposte)
             </p>
             <hr>
             <table class="tab-risposte">
               <tr>
-                <td><input type="radio" name="r4" value="A" /></td>
-                <td>SELECT ALL FROM T; </td>
+                <td><input type="checkbox" name="c2" value="A" /></td>
+                <td>0</td>
               </tr>
               <tr>
-                <td><input type="radio" name="r4" value="B" /></td>
-                <td>SELECT * FROM T;</td>
+                <td><input type="checkbox" name="c2" value="B" /></td>
+                <td>0.44</td>
               </tr>
               <tr>
-                <td><input type="radio" name="r4" value="C" /></td>
-                <td>SELECT EVERYTHING FROM T;</td>
+                <td><input type="checkbox" name="c2" value="C" /></td>
+                <td>1.34</td>
               </tr>
               <tr>
-                <td><input type="radio" name="r4" value="D" /></td>
-                <td>SELECT RECORDS FROM T;</td>
+                <td><input type="checkbox" name="c2" value="D" /></td>
+                <td>1</td>
               </tr>
               <tr>
-                <td><input type="radio" name="r4" value="E" /></td>
-                <td>SELECT \ FROM T;</td>
+                <td><input type="checkbox" name="c2" value="E" /></td>
+                <td>-0.25</td>
               </tr>
               <tr>
                 <td><br><br><br><br><br><br><br><br></td>
@@ -547,30 +596,29 @@
 
 
             <p class="text-center">
-              Dato un Database con una tabella T, qual è il codice SQL corretto
-              per selezionare tutti record presenti nella tabella?
+              Date le seguenti affermazioni, stabilire se sono Vere (Seleziona) o False (Vuoto)
             </p>
             <hr>
             <table class="tab-risposte">
               <tr>
-                <td><input type="radio" name="r4" value="A" /></td>
-                <td>SELECT ALL FROM T; </td>
+                <td><input type="checkbox" name="c3" value="A" /></td>
+                <td>Python è un linguaggio di programmazione di basso livello</td>
               </tr>
               <tr>
-                <td><input type="radio" name="r4" value="B" /></td>
-                <td>SELECT * FROM T;</td>
+                <td><input type="checkbox" name="c3" value="B" /></td>
+                <td>Nell'istruzione JavaScript <em>var A = Math.floor(5.6);&nbsp;</em> il valore della variabile A sarà 5</td>
               </tr>
               <tr>
-                <td><input type="radio" name="r4" value="C" /></td>
-                <td>SELECT EVERYTHING FROM T;</td>
+                <td><input type="checkbox" name="c3" value="C" /></td>
+                <td>I dati di un Database sono salvati su un file di testo</td>
               </tr>
               <tr>
-                <td><input type="radio" name="r4" value="D" /></td>
-                <td>SELECT RECORDS FROM T;</td>
+                <td><input type="checkbox" name="c3" value="D" /></td>
+                <td>PHP è un linguaggio di programmazione lato server utilizzato per la creazione di pagine web dinamiche</td>
               </tr>
               <tr>
-                <td><input type="radio" name="r4" value="E" /></td>
-                <td>SELECT \ FROM T;</td>
+                <td><input type="checkbox" name="c3" value="E" /></td>
+                <td>L'evento oncontextmenu viene attivato quando si fa click con il tasto sinistro</td>
               </tr>
               <tr>
                 <td><br><br><br><br><br><br><br><br></td>
@@ -596,30 +644,29 @@
 
 
             <p class="text-center">
-              Dato un Database con una tabella T, qual è il codice SQL corretto
-              per selezionare tutti record presenti nella tabella?
+              Quali sono i principali operatori per l'allocazione e pulizia dinamica della memoria in C++?
             </p>
             <hr>
             <table class="tab-risposte">
               <tr>
-                <td><input type="radio" name="r4" value="A" /></td>
-                <td>SELECT ALL FROM T; </td>
+                <td><input type="checkbox" name="c4" value="A" /></td>
+                <td>create</td>
               </tr>
               <tr>
-                <td><input type="radio" name="r4" value="B" /></td>
-                <td>SELECT * FROM T;</td>
+                <td><input type="checkbox" name="c4" value="B" /></td>
+                <td>delete</td>
               </tr>
               <tr>
-                <td><input type="radio" name="r4" value="C" /></td>
-                <td>SELECT EVERYTHING FROM T;</td>
+                <td><input type="checkbox" name="c4" value="C" /></td>
+                <td>alloc</td>
               </tr>
               <tr>
-                <td><input type="radio" name="r4" value="D" /></td>
-                <td>SELECT RECORDS FROM T;</td>
+                <td><input type="checkbox" name="c4" value="D" /></td>
+                <td>clear</td>
               </tr>
               <tr>
-                <td><input type="radio" name="r4" value="E" /></td>
-                <td>SELECT \ FROM T;</td>
+                <td><input type="checkbox" name="c4" value="E" /></td>
+                <td>new</td>
               </tr>
               <tr>
                 <td><br><br><br><br><br><br><br><br></td>
@@ -740,12 +787,7 @@
           <div class="progress" style="text-align:center;margin-top: 22px;margin-right: 60px" id="barra">
             <div class="progress-bar progress-bar-animated progress-bar-striped" role="progressbar" style="width: 10%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">10%</div>
           </div>
-
-
-
-
         </div>
-
       </div>
     </div>
   </div>
