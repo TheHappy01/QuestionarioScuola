@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.2042
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Pagine Web", "Pagine Web", "{D46DD06E-1F3B-4982-B5FE-3B4554E61D75}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\..\Desktop\01-rispostasingolaEsempio.html = ..\..\..\Desktop\01-rispostasingolaEsempio.html
+		..\..\..\Desktop\02-rispostamultipla.html = ..\..\..\Desktop\02-rispostamultipla.html
+		..\..\..\Desktop\03-associazionerisposte.html = ..\..\..\Desktop\03-associazionerisposte.html
+		..\..\..\Desktop\angoli.gif = ..\..\..\Desktop\angoli.gif
+		..\..\..\Desktop\test-Gargiulo.html = ..\..\..\Desktop\test-Gargiulo.html
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {8927F3B7-619C-4C84-8DB6-B4ED251F5B8B}
+	EndGlobalSection
+EndGlobal

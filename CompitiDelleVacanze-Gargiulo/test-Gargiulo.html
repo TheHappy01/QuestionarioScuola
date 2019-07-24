@@ -1,0 +1,853 @@
+﻿<!DOCTYPE html>
+
+<!--
+             Alunno: Elio Gargiulo
+             Classe: 5^DIN
+
+    Anno scolastico: 2019/2020
+               Data: 24/07/2019
+-->
+
+<html>
+<head>
+  <!-- Inizio Head -->
+  <meta charset="utf-8" />
+  <title>Test di Informatica</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <link href="https://fonts.googleapis.com/css?family=Quicksand&display=swap" rel="stylesheet">
+  <!-- Stili css ulteriori utilizzati -->
+  <style type="text/css">
+
+    h1 {
+      text-align: center;
+    }
+
+    .nonrispondo {
+      text-align: center;
+    }
+
+    table.tab-risposte {
+      margin-left: 5%;
+    }
+
+    table.tab-risposte td {
+      padding: 0.5rem 1rem;
+      text-align: left;
+    }
+
+    .valuta {
+      margin-top: 2rem;
+      text-align: center;
+    }
+
+    body {
+      height: 100%;
+      margin: 0;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      background-color: #039bdc;
+      font-family: 'Quicksand', sans-serif;
+      font-size: 18px;
+      margin-bottom: 15px;
+    }
+
+    .scritta-progresso {
+      float: left;
+      margin-right: 1em;
+      margin-top: 15px;
+    }
+
+  </style>
+  <!-- Funzioni Javascript -->
+  <script type="text/javascript">
+
+    function aggiornaBarra(percentuale) {
+      document.getElementById("barra").innerHTML = '<div class="progress-bar progress-bar-animated progress-bar-striped" role="progressbar" style="width:' + percentuale + '%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">' + percentuale +'%</div>';
+    }
+
+    function cambia(id, percentuale) {
+      $(id).tab('show');
+      aggiornaBarra(percentuale);
+    }
+
+    function rimuoviRS(nomeRisposte) {
+      var elemento = document.getElementsByName(nomeRisposte);
+      for (var i = 0; i < elemento.length; i++)
+        elemento[i].checked = false;
+    }
+
+    function rimuoviRSselect(s1,s2,s3,s4) {
+
+      var select1 = document.getElementById(s1);
+      var select2 = document.getElementById(s2);
+      var select3 = document.getElementById(s3);
+      var select4 = document.getElementById(s4);
+
+      select1[0].selected = true;
+      select2[0].selected = true;
+      select3[0].selected = true;
+      select4[0].selected = true;
+
+    }
+
+    function puntiRSradio(nomeRisposte, rispEsatta) {
+      var radio = document.getElementsByName(nomeRisposte);
+      var risp = "";
+      for (var i = 0; i < radio.length; i++) {
+        if (radio[i].checked) {
+          risp = radio[i].value;
+          break;
+        }
+      }
+      var punti;
+      if (risp == "")
+        punti = 0;
+      else if (risp == rispEsatta)
+        punti = 1;
+      else
+        punti = -0.25;
+
+      return punti
+    }
+
+    function puntiRScheckbox(nomeRisposte, rispEsatta) {
+      var risposte = rispEsatta.split("-");
+      var alternative = 5;
+      var checkbox = document.getElementsByName(nomeRisposte);
+      var corrette = 0;
+      var sbagliate = 0;
+      var nulla = 0;
+      for (var i = 0; i < checkbox.length; i++) {
+        if (checkbox[i].checked) {
+          var errata = true;
+          for (var j = 0; j < risposte.length; j++) {
+            if (checkbox[i].value == risposte[j]) {
+              corrette++;
+              errata = false;
+            }
+          }
+          if (errata == true)
+            sbagliate++;
+        } else
+          nulla++;
+      }
+      var punti;
+      if (nulla == alternative)
+        punti = 0;
+      else if (corrette == 2 && sbagliate == 0)
+        punti = 1.5;
+      else if (corrette == 2 && sbagliate == 1 || corrette == 1 && sbagliate == 1)
+        punti = 1;
+      else if (corrette == 2 && sbagliate == 2 || corrette == 1 && sbagliate == 2)
+        punti = 0.5;
+      else
+        punti = -0.25
+      return punti
+    }
+
+    function puntiRSselect(arraySelect, rispGiuste) {
+
+      var select1 = document.getElementById(arraySelect[0]);
+      var select2 = document.getElementById(arraySelect[1]);
+      var select3 = document.getElementById(arraySelect[2]);
+      var select4 = document.getElementById(arraySelect[3]);
+      var corrette = 0;
+      if (select1.options[select1.selectedIndex].value == rispGiuste[0])
+        corrette++;
+      if (select2.options[select2.selectedIndex].value == rispGiuste[1])
+        corrette++;
+      if (select3.options[select3.selectedIndex].value == rispGiuste[2])
+        corrette++;
+      if (select4.options[select4.selectedIndex].value == rispGiuste[3])
+        corrette++;
+
+      var punti = 0;
+      if (corrette == 4)
+        punti = 1;
+
+      return punti;
+    }
+
+    function valuta() {
+
+      const MAX_PUNTI = 12;
+      var totale = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+      var nomeRisposteRadio = ["r1", "r2", "r3", "r4"];
+      var rispRadio = ["C", "D", "B", "B"];
+      var nomeRisposteCheck = ["c1", "c2", "c3", "c4"];
+      var rispCheck = ["A-C", "A-B", "B-D", "B-E"];
+      var selectQuesito9 = ["select1", "select2", "select3", "select4"];
+      var corretteSelectQuesito9 = ["C", "A", "D", "E"];
+      var selectQuesito10 = ["select5", "select6", "select7", "select8"];
+      var corretteSelectQuesito10 = ["B", "D", "C", "A"];
+
+      for (var i = 0; i < nomeRisposteRadio.length; i++) {
+        totale[i] = puntiRSradio(nomeRisposteRadio[i], rispRadio[i]);
+      }
+      for (var i = 0; i < nomeRisposteCheck.length; i++) {
+        totale[i + 4] = puntiRScheckbox(nomeRisposteCheck[i], rispCheck[i]);
+      }
+      totale[8] = puntiRSselect(selectQuesito9, corretteSelectQuesito9);
+      totale[9] = puntiRSselect(selectQuesito10, corretteSelectQuesito10);
+
+      var promosso;
+      var punteggio = 0;
+      for (var i = 0; i < totale.length; i++)
+        punteggio += totale[i];
+      if (punteggio >= 7)
+        promosso = true;
+      else
+        promosso = false;
+      var v = document.getElementById("visore");
+      if (promosso) {
+        v.innerHTML = "<p>Punteggio ottenuto: <strong>" + punteggio + "/" + MAX_PUNTI + "</strong></p> <p> Test Superato!</p>";
+        $('#dialogo').modal('show'); // Istruzione JQuery
+      }
+      if (!promosso) {
+        v.innerHTML = "<p>Punteggio ottenuto: <strong>" + punteggio + "/" + MAX_PUNTI + "</strong></p> <p> Test non superato, Riprova!</p>";
+        $('#dialogo').modal('show'); // Istruzione JQuery
+      }
+    }
+
+  </script>
+
+</head>
+<!-- Inizio Body -->
+<body>
+  <br /> <br />
+  <!-- Navbar -->
+  <nav class="navbar navbar-clear navbar-expand-lg bg-white fixed-top shadow-lg">
+    <div class="container">
+      <!-- Dropdown dell' elenco dei Quesiti -->
+      <div class="nav-item dropdown" role="presentation">
+        <a class="navbar-brand logo dropdown-toggle" href="#" id="tenda" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color:black">
+          Indice Quesiti
+        </a>
+        <div class="dropdown-menu" aria-labelledby="tenda">
+          <!-- Bottoni Link che fanno da collegamento alle tab dei quesiti tramite id del quesito -->
+          <div>
+            <!-- Elenco Quesiti -->
+            <ul class="nav mx-auto">
+              <li>
+                <a class="nav-link" onclick="aggiornaBarra(10);" data-toggle="tab" id="quesitotab1" href="#quesito1" style="color:black">&nbsp;&nbsp;&nbsp;&nbsp;Quesito 1</a>
+              </li>
+              <li>
+                <a class="nav-link" onclick="aggiornaBarra(20);" data-toggle="tab" id="quesitotab2" href="#quesito2" style="color:black">&nbsp;&nbsp;&nbsp;&nbsp;Quesito 2</a>
+              </li>
+              <li>
+                <a class="nav-link" onclick="aggiornaBarra(30);" data-toggle="tab" id="quesitotab3" href="#quesito3" style="color:black">&nbsp;&nbsp;&nbsp;&nbsp;Quesito 3</a>
+              </li>
+              <li>
+                <a class="nav-link" onclick="aggiornaBarra(40);" data-toggle="tab" id="quesitotab4" href="#quesito4" style="color:black">&nbsp;&nbsp;&nbsp;&nbsp;Quesito 4</a>
+              </li>
+              <li>
+                <a class="nav-link" onclick="aggiornaBarra(50);" data-toggle="tab" id="quesitotab5" href="#quesito5" style="color:black">&nbsp;&nbsp;&nbsp;&nbsp;Quesito 5</a>
+              </li>
+              <li>
+                <a class="nav-link" onclick="aggiornaBarra(60);" data-toggle="tab" id="quesitotab6" href="#quesito6" style="color:black">&nbsp;&nbsp;&nbsp;&nbsp;Quesito 6</a>
+              </li>
+              <li>
+                <a class="nav-link" onclick="aggiornaBarra(70);" data-toggle="tab" id="quesitotab7" href="#quesito7" style="color:black">&nbsp;&nbsp;&nbsp;&nbsp;Quesito 7</a>
+              </li>
+              <li>
+                <a class="nav-link" onclick="aggiornaBarra(80);" data-toggle="tab" id="quesitotab8" href="#quesito8" style="color:black">&nbsp;&nbsp;&nbsp;&nbsp;Quesito 8</a>
+              </li>
+              <li>
+                <a class="nav-link" onclick="aggiornaBarra(90);" data-toggle="tab" id="quesitotab9" href="#quesito9" style="color:black">&nbsp;&nbsp;&nbsp;&nbsp;Quesito 9</a>
+              </li>
+              <li>
+                <a class="nav-link" onclick="aggiornaBarra(100);" data-toggle="tab" id="quesitotab10" href="#quesito10" style="color:black">&nbsp;&nbsp;&nbsp;&nbsp;Quesito 10</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <!-- Label a Destra della Navbar -->
+      <ul class="nav navbar-nav ml-auto">
+        <li class="nav-item text-center" role="presentation">
+          <a class="nav-item text-center">
+            10 Quesiti
+          </a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+  <!-- Main Contenitore (Per Margini  e Allineamento del Body)-->
+  <div class="container" style="max-width: 1450px">
+    <br />
+    <!-- Titolo Informazioni -->
+    <div class="text-center" style="font-size: 16px;color:white;">
+      <h1>Test di Informatica</h1>
+      a risposta singola , multipla e selezione.
+    </div>
+    <br />
+    <!-- Contenitore Card per i Quesiti -->
+    <div class="card" style="min-height: 700px;">
+      <div class="card-body">
+        <div class="tab-content">
+          <!-- Elenco Quesiti-->
+          <div class="tab-pane fade show active" id="quesito1">
+            <!--Quesito 1-->
+            <h3 class="text-center"><b>Quesito n.1</b></h3>
+            <p class="text-center">
+              Quale delle seguenti alternative <b>NON</b> è un linguaggio di programmazione?
+            </p>
+            <hr>
+            <table class="tab-risposte" style="text-align:left">
+              <tr>
+                <td><input type="radio" name="r1" value="A" /></td>
+                <td>C#</td>
+              </tr>
+              <tr>
+                <td><input type="radio" name="r1" value="B" /></td>
+                <td>Rust</td>
+              </tr>
+              <tr>
+                <td><input type="radio" name="r1" value="C" /></td>
+                <td>Atom</td>
+              </tr>
+              <tr>
+                <td><input type="radio" name="r1" value="D" /></td>
+                <td>Ruby</td>
+              </tr>
+              <tr>
+                <td><input type="radio" name="r1" value="E" /></td>
+                <td>Java </td>
+              </tr>
+              <tr>
+                <td><br><br><br><br><br><br><br><br></td>
+              </tr>
+            </table>
+            <br>
+            <div class="nonrispondo" id="test">
+              <button class="btn btn-outline-secondary btn-lg" onclick="rimuoviRS('r1');">
+                Non rispondo
+              </button>
+              <button class="btn btn-outline-primary btn-lg" onclick="cambia('#quesitotab2',20);">
+                Avanti >
+              </button>
+            </div>
+          </div>
+
+          <div class="tab-pane fade" id="quesito2">
+            <!--Quesito 2-->
+            <h3 class="text-center"><b>Quesito n.2</b></h3>
+            <p class="text-center">
+              Osserva il seguente codice: Quale linguaggio di programmazione è stato utilizzato in questo programma?<br />
+            </p>
+            <ol style="margin-left: 60px;margin-right: 60px;font-size:15px">
+              <li style="font-weight: normal; vertical-align: top;">
+                <div style="font: normal normal 1em/1.2em monospace; margin: 0; padding: 0; background: none; vertical-align: top;"><span style="color: #ff7700; font-weight: bold;">&nbsp;import</span> <span style="color: #dc143c;">math</span></div>
+              </li>
+              <li style="font-weight: normal; vertical-align: top;">
+                <div style="font: normal normal 1em/1.2em monospace; margin: 0; padding: 0; background: none; vertical-align: top;">&nbsp;</div>
+              </li>
+              <li style="font-weight: normal; vertical-align: top;">
+                <div style="font: normal normal 1em/1.2em monospace; margin: 0; padding: 0; background: none; vertical-align: top;"><span style="color: #ff7700; font-weight: bold;">&nbsp;print</span><span style="color: black;">(</span><span
+                    style="color: #483d8b;">"Inserire un numero"</span><span style="color: black;">)</span></div>
+              </li>
+              <li style="font-weight: normal; vertical-align: top;">
+                <div style="font: normal normal 1em/1.2em monospace; margin: 0; padding: 0; background: none; vertical-align: top;">&nbsp;numero <span style="color: #66cc66;">=</span> <span style="color: #008000;">int</span><span
+                    style="color: black;">(</span><span style="color: #008000;">input</span><span style="color: black;">(</span><span style="color: black;">)</span><span style="color: black;">)</span></div>
+              </li>
+              <li style="font-weight: bold; vertical-align: top;">
+                <div style="font: normal normal 1em/1.2em monospace; margin: 0; padding: 0; background: none; vertical-align: top;">&nbsp;</div>
+              </li>
+              <li style="font-weight: normal; vertical-align: top;">
+                <div style="font: normal normal 1em/1.2em monospace; margin: 0; padding: 0; background: none; vertical-align: top;"><span style="color: #ff7700; font-weight: bold;">&nbsp;if</span> numero <span style="color: #66cc66;">&lt;</span>
+                  <span style="color: #ff4500;">5</span>:</div>
+              </li>
+              <li style="font-weight: normal; vertical-align: top;">
+                <div style="font: normal normal 1em/1.2em monospace; margin: 0; padding: 0; background: none; vertical-align: top;">&nbsp;&nbsp;log <span style="color: #66cc66;">=</span> <span style="color: #008000;">float</span><span
+                    style="color: black;">(</span><span style="color: #dc143c;">math</span>.<span style="color: black;">log10</span><span style="color: black;">(</span>numero<span style="color: black;">)</span><span style="color: black;">)</span>
+                </div>
+              </li>
+              <li style="font-weight: normal; vertical-align: top;">
+                <div style="font: normal normal 1em/1.2em monospace; margin: 0; padding: 0; background: none; vertical-align: top;"><span style="color: #ff7700; font-weight: bold;">&nbsp;&nbsp;print</span><span style="color: black;">(</span><span
+                    style="color: #483d8b;">"Il logaritmo e':"</span>+<span style="color: #008000;">str</span><span style="color: black;">(</span>log<span style="color: black;">)</span><span style="color: black;">)</span></div>
+              </li>
+              <li style="font-weight: normal; vertical-align: top;">
+                <div style="font: normal normal 1em/1.2em monospace; margin: 0; padding: 0; background: none; vertical-align: top;"><span style="color: #ff7700; font-weight: bold;">&nbsp;else</span>:</div>
+              </li>
+              <li style="font-weight: bold; vertical-align: top;">
+                <div style="font: normal normal 1em/1.2em monospace; margin: 0; padding: 0; background: none; vertical-align: top;">&nbsp;&nbsp;rad <span style="color: #66cc66;">=</span> <span style="color: #008000;">float</span><span
+                    style="color: black;">(</span><span style="color: #dc143c;">math</span>.<span style="color: black;">sqrt</span><span style="color: black;">(</span>numero<span style="color: black;">)</span><span style="color: black;">)</span>
+                </div>
+              </li>
+              <li style="font-weight: normal; vertical-align: top;">
+                <div style="font: normal normal 1em/1.2em monospace; margin: 0; padding: 0; background: none; vertical-align: top;"><span style="color: #ff7700; font-weight: bold;">&nbsp;&nbsp;print</span><span style="color: black;">(</span><span
+                    style="color: #483d8b;">"La radice quadrata e':"</span>+<span style="color: #008000;">str</span><span style="color: black;">(</span>rad<span style="color: black;">)</span><span style="color: black;">)</span></div>
+              </li>
+            </ol>
+            <hr>
+            <table class="tab-risposte text-left">
+              <tr>
+                <td><input type="radio" name="r2" value="A" /></td>
+                <td>PHP</td>
+              </tr>
+              <tr>
+                <td><input type="radio" name="r2" value="B" /></td>
+                <td>Perl</td>
+              </tr>
+              <tr>
+                <td><input type="radio" name="r2" value="C" /></td>
+                <td>Visual Basic</td>
+              </tr>
+              <tr>
+                <td><input type="radio" name="r2" value="D" /></td>
+                <td>Python</td>
+              </tr>
+              <tr>
+                <td><input type="radio" name="r2" value="E" /></td>
+                <td>Pascal</td>
+              </tr>
+            </table>
+            <div class="nonrispondo">
+              <button class="btn btn-outline-secondary btn-lg" onclick="rimuoviRS('r2');">
+                Non rispondo
+              </button>
+              <button class="btn btn-outline-primary btn-lg" onclick="cambia('#quesitotab1',10);">
+                Indietro < </button> <button class="btn btn-outline-primary btn-lg" onclick="cambia('#quesitotab3',30);">
+                  Avanti >
+              </button>
+            </div>
+          </div>
+
+          <div class="tab-pane fade" id="quesito3">
+            <!--Quesito 3-->
+            <h3 class="text-center"><b>Quesito n.3</b></h3>
+            <p class="text-center">
+              Che cos'è un linguaggio di Alto Livello?
+            </p>
+            <hr>
+            <table class="tab-risposte text-left">
+              <tr>
+                <td><input type="radio" name="r3" value="A" /></td>
+                <td>Un linguaggio creato per essere facilmente interpretabile dall'uomo e più efficiente dei linguaggi a basso livello </td>
+              </tr>
+              <tr>
+                <td><input type="radio" name="r3" value="B" /></td>
+                <td>Un linguaggio creato per essere facilmente interpretabile dall'uomo ma meno efficiente dei linguaggi a basso livello </td>
+              </tr>
+              <tr>
+                <td><input type="radio" name="r3" value="C" /></td>
+                <td>Un linguaggio creato per essere facilmente interpretabile dalla macchina ma meno efficiente dei linguaggi a basso livello </td>
+              </tr>
+              <tr>
+                <td><input type="radio" name="r3" value="D" /></td>
+                <td>Un linguaggio creato per essere facilmente interpretabile dalla macchina e più efficiente dei linguaggi a basso livello </td>
+              </tr>
+              <tr>
+                <td><input type="radio" name="r3" value="E" /></td>
+
+                <td>Nessuna delle precedenti</td>
+              </tr>
+              <tr>
+                <td><br><br><br><br><br><br><br><br></td>
+              </tr>
+            </table>
+            <br />
+            <div class="nonrispondo" id="test">
+              <button class="btn btn-outline-secondary btn-lg" onclick="rimuoviRS('r3');">
+                Non rispondo
+              </button>
+              <button class="btn btn-outline-primary btn-lg" onclick="cambia('#quesitotab2',10);">
+                Indietro < </button> <button class="btn btn-outline-primary btn-lg" onclick="cambia('#quesitotab4',40);">
+                  Avanti >
+              </button>
+            </div>
+          </div>
+
+          <div class="tab-pane fade" id="quesito4">
+            <!--Quesito 4-->
+            <h3 class="text-center"><b>Quesito n.4</b></h3>
+            <p class="text-center">
+              Dato un Database con una tabella T, qual è il codice SQL corretto
+              per selezionare tutti record presenti nella tabella?
+            </p>
+            <hr>
+            <table class="tab-risposte">
+              <tr>
+                <td><input type="radio" name="r4" value="A" /></td>
+                <td>SELECT ALL FROM T; </td>
+              </tr>
+              <tr>
+                <td><input type="radio" name="r4" value="B" /></td>
+                <td>SELECT * FROM T;</td>
+              </tr>
+              <tr>
+                <td><input type="radio" name="r4" value="C" /></td>
+                <td>SELECT EVERYTHING FROM T;</td>
+              </tr>
+              <tr>
+                <td><input type="radio" name="r4" value="D" /></td>
+                <td>SELECT RECORDS FROM T;</td>
+              </tr>
+              <tr>
+                <td><input type="radio" name="r4" value="E" /></td>
+                <td>SELECT \ FROM T;</td>
+              </tr>
+              <tr>
+                <td><br><br><br><br><br><br><br><br></td>
+              </tr>
+            </table>
+            <br />
+            <div class="nonrispondo">
+              <button class="btn btn-outline-secondary btn-lg" onclick="rimuoviRS('r4');">
+                Non rispondo
+              </button>
+              <button class="btn btn-outline-primary btn-lg" onclick="cambia('#quesitotab3',20);">
+                Indietro < </button> <button class="btn btn-outline-primary btn-lg" onclick="cambia('#quesitotab5',50);">
+                  Avanti >
+              </button>
+            </div>
+          </div>
+
+          <div class="tab-pane fade" id="quesito5">
+            <!--Quesito 5-->
+            <h3 class="text-center"><b>Quesito n.5</b></h3>
+            <p class="text-center">
+              Quali delle Seguenti scritture rappresentano correttamente un codice JavaScript Embedded? (Due Risposte)
+            </p>
+            <hr>
+            <table class="tab-risposte">
+              <tr>
+                <td><input type="checkbox" name="c1" value="A" /></td>
+                <td>&lt;script&gt;<em> ... codice javascript ... </em>&lt;/script&gt;</td>
+              </tr>
+              <tr>
+                <td><input type="checkbox" name="c1" value="B" /></td>
+                <td>&lt;javascript&gt;<em> ... codice javascript ... </em>&lt;/javascript&gt;</td>
+              </tr>
+              <tr>
+                <td><input type="checkbox" name="c1" value="C" /></td>
+                <td>&lt;script type="text/javascript"&gt;<em> ... codice javascript ... </em>&lt;/script&gt;</td>
+              </tr>
+              <tr>
+                <td><input type="checkbox" name="c1" value="D" /></td>
+                <td>&lt;script text ="javascript"&gt;<em> ... codice javascript ... </em>&lt;/script&gt;</td>
+              </tr>
+              <tr>
+                <td><input type="checkbox" name="c1" value="E" /></td>
+                <td>&lt;script src="mioscript.js"&gt;<em> ... codice javascript ... </em>&lt;/script&gt;</td>
+              </tr>
+              <tr>
+                <td><br><br><br><br><br><br><br><br></td>
+              </tr>
+            </table>
+            <br />
+            <div class="nonrispondo">
+              <button class="btn btn-outline-secondary btn-lg" onclick="rimuoviRS('c1');">
+                Non rispondo
+              </button>
+              <button class="btn btn-outline-primary btn-lg" onclick="cambia('#quesitotab4',30);">
+                Indietro < </button> <button class="btn btn-outline-primary btn-lg" onclick="cambia('#quesitotab6',60);">
+                  Avanti >
+              </button>
+            </div>
+          </div>
+
+          <div class="tab-pane fade" id="quesito6">
+            <!--Quesito 6-->
+            <h3 class="text-center"><b>Quesito n.6</b></h3>
+            <p class="text-center">
+              Quali numeri può restituire la funzione Math.Random() in JavaScript? (Due Risposte)
+            </p>
+            <hr>
+            <table class="tab-risposte">
+              <tr>
+                <td><input type="checkbox" name="c2" value="A" /></td>
+                <td>0</td>
+              </tr>
+              <tr>
+                <td><input type="checkbox" name="c2" value="B" /></td>
+                <td>0.44</td>
+              </tr>
+              <tr>
+                <td><input type="checkbox" name="c2" value="C" /></td>
+                <td>1.34</td>
+              </tr>
+              <tr>
+                <td><input type="checkbox" name="c2" value="D" /></td>
+                <td>1</td>
+              </tr>
+              <tr>
+                <td><input type="checkbox" name="c2" value="E" /></td>
+                <td>-0.25</td>
+              </tr>
+              <tr>
+                <td><br><br><br><br><br><br><br><br></td>
+              </tr>
+            </table>
+            <br />
+            <div class="nonrispondo">
+              <button class="btn btn-outline-secondary btn-lg" onclick="rimuoviRS('c2');">
+                Non rispondo
+              </button>
+              <button class="btn btn-outline-primary btn-lg" onclick="cambia('#quesitotab5',40);">
+                Indietro < </button> <button class="btn btn-outline-primary btn-lg" onclick="cambia('#quesitotab7',70);">
+                  Avanti >
+              </button>
+            </div>
+          </div>
+
+          <div class="tab-pane fade" id="quesito7">
+            <!--Quesito 7-->
+            <h3 class="text-center"><b>Quesito n.7</b></h3>
+            <p class="text-center">
+              Date le seguenti affermazioni, stabilire se sono Vere (Seleziona) o False (Vuoto)
+            </p>
+            <hr>
+            <table class="tab-risposte">
+              <tr>
+                <td><input type="checkbox" name="c3" value="A" /></td>
+                <td>Python è un linguaggio di programmazione di basso livello</td>
+              </tr>
+              <tr>
+                <td><input type="checkbox" name="c3" value="B" /></td>
+                <td>Nell'istruzione JavaScript <em>var A = Math.floor(5.6);&nbsp;</em> il valore della variabile A sarà 5</td>
+              </tr>
+              <tr>
+                <td><input type="checkbox" name="c3" value="C" /></td>
+                <td>I dati di un Database sono salvati su un file di testo</td>
+              </tr>
+              <tr>
+                <td><input type="checkbox" name="c3" value="D" /></td>
+                <td>PHP è un linguaggio di programmazione lato server utilizzato per la creazione di pagine web dinamiche</td>
+              </tr>
+              <tr>
+                <td><input type="checkbox" name="c3" value="E" /></td>
+                <td>L'evento oncontextmenu viene attivato quando si fa click con il tasto sinistro</td>
+              </tr>
+              <tr>
+                <td><br><br><br><br><br><br><br><br></td>
+              </tr>
+            </table>
+            <br />
+            <div class="nonrispondo">
+              <button class="btn btn-outline-secondary btn-lg" onclick="rimuoviRS('c3');">
+                Non rispondo
+              </button>
+              <button class="btn btn-outline-primary btn-lg" onclick="cambia('#quesitotab6',50);">
+                Indietro < </button> <button class="btn btn-outline-primary btn-lg" onclick="cambia('#quesitotab8',80);">
+                  Avanti >
+              </button>
+            </div>
+          </div>
+
+          <div class="tab-pane fade" id="quesito8">
+            <!--Quesito 8-->
+            <h3 class="text-center"><b>Quesito n.8</b></h3>
+            <p class="text-center">
+              Quali sono i principali operatori per l'allocazione e pulizia dinamica della memoria in C++?
+            </p>
+            <hr>
+            <table class="tab-risposte">
+              <tr>
+                <td><input type="checkbox" name="c4" value="A" /></td>
+                <td>create</td>
+              </tr>
+              <tr>
+                <td><input type="checkbox" name="c4" value="B" /></td>
+                <td>delete</td>
+              </tr>
+              <tr>
+                <td><input type="checkbox" name="c4" value="C" /></td>
+                <td>alloc</td>
+              </tr>
+              <tr>
+                <td><input type="checkbox" name="c4" value="D" /></td>
+                <td>clear</td>
+              </tr>
+              <tr>
+                <td><input type="checkbox" name="c4" value="E" /></td>
+                <td>new</td>
+              </tr>
+              <tr>
+                <td><br><br><br><br><br><br><br><br></td>
+              </tr>
+            </table>
+            <br />
+            <div class="nonrispondo">
+              <button class="btn btn-outline-secondary btn-lg" onclick="rimuoviRS('c4');">
+                Non rispondo
+              </button>
+              <button class="btn btn-outline-primary btn-lg" onclick="cambia('#quesitotab7',60);">
+                Indietro < </button> <button class="btn btn-outline-primary btn-lg" onclick="cambia('#quesitotab9',90);">
+                  Avanti >
+              </button>
+            </div>
+          </div>
+
+          <div class="tab-pane fade" id="quesito9">
+            <!--Quesito 9-->
+            <h3 class="text-center"><b>Quesito n.9</b></h3>
+            <p class="text-center">
+              Associa alle Seguenti librerie il corrispondente Linguaggio di Programmazione (Una delle alternative non deve essere utilizzata)
+            </p>
+            <hr>
+            <table class="tab-risposte">
+                <tr>
+                  <td><select id="select1">
+                      <option disabled selected value>Seleziona</option>
+                      <option value="A">C</option>
+                      <option value="B">C++</option>
+                      <option value="C">C#</option>
+                      <option value="D">Ruby</option>
+                      <option value="E">Python</option>
+                    </select></td>
+                  <td>using System.IO</td>
+                </tr>
+                <tr>
+                  <td><select id="select2">
+                      <option disabled selected value>Seleziona</option>
+                      <option value="A">C</option>
+                      <option value="B">C++</option>
+                      <option value="C">C#</option>
+                      <option value="D">Ruby</option>
+                      <option value="E">Python</option>
+                    </select></td>
+                  <td>include &lt;stdio.h&gt;</td>
+                </tr>
+                <tr>
+                  <td><select id="select3">
+                      <option disabled selected value>Seleziona</option>
+                      <option value="A">C</option>
+                      <option value="B">C++</option>
+                      <option value="C">C#</option>
+                      <option value="D">Ruby</option>
+                      <option value="E">Python</option>
+                    </select></td>
+                  <td>require 'mathn'</td>
+                </tr>
+                <tr>
+                  <td><select id="select4">
+                      <option disabled selected value>Seleziona</option>
+                      <option value="A">C</option>
+                      <option value="B">C++</option>
+                      <option value="C">C#</option>
+                      <option value="D">Ruby</option>
+                      <option value="E">Python</option>
+                    </select></td>
+                  <td>import string</td>
+                </tr>
+                <tr>
+                  <td>&nbsp;</td>
+                </tr>
+                <tr>
+                  <td><br><br><br><br><br><br><br><br></td>
+                </tr>
+            </table>
+            <br />
+            <div class="nonrispondo">
+              <button class="btn btn-outline-secondary btn-lg" onclick="rimuoviRSselect('select1','select2','select3','select4');">
+                Non rispondo
+              </button>
+              <button class="btn btn-outline-primary btn-lg" onclick="cambia('#quesitotab8',70);">
+                Indietro < </button> <button class="btn btn-outline-primary btn-lg" onclick="cambia('#quesitotab10',100);">
+                  Avanti >
+              </button>
+            </div>
+          </div>
+
+          <div class="tab-pane fade" id="quesito10">
+            <!--Quesito 10-->
+            <h3 class="text-center"><b>Quesito n.10</b></h3>
+            <p class="text-center">
+              Inserisci la Parola mancante al posto dei puntini (Una delle alternative non deve essere utilizzata)
+            </p>
+            <hr>
+            <table class="tab-risposte">
+                <tr>
+                  <td><select id="select5">
+                      <option disabled selected value>Seleziona</option>
+                      <option value="A">Math</option>
+                      <option value="B">input</option>
+                      <option value="C">print</option>
+                      <option value="D">From</option>
+                      <option value="E">Console.Write</option>
+                    </select></td>
+                  <td>&lt;... type="checkbox" name="check1" value="1"/&gt;</td>
+                </tr>
+                <tr>
+                  <td><select id="select6">
+                      <option disabled selected value>Seleziona</option>
+                      <option value="A">Math</option>
+                      <option value="B">input</option>
+                      <option value="C">print</option>
+                      <option value="D">From</option>
+                      <option value="E">Console.Write</option>
+                    </select></td>
+                  <td>SELECT cognomi ... persone</td>
+                </tr>
+                <tr>
+                  <td><select id="select7">
+                      <option disabled selected value>Seleziona</option>
+                      <option value="A">Math</option>
+                      <option value="B">input</option>
+                      <option value="C">print</option>
+                      <option value="D">From</option>
+                      <option value="E">Console.Write</option>
+                    </select></td>
+                  <td>... "Ciao Mondo!"</td>
+                </tr>
+                <tr>
+                  <td><select id="select8">
+                      <option disabled selected value>Seleziona</option>
+                      <option value="A">Math</option>
+                      <option value="B">input</option>
+                      <option value="C">print</option>
+                      <option value="D">From</option>
+                      <option value="E">Console.Write</option>
+                    </select></td>
+                  <td>... .ceil(variabile);</td>
+                </tr>
+                <tr>
+                  <td>&nbsp;</td>
+                </tr>
+                <tr>
+                  <td><br><br><br><br><br><br><br><br></td>
+                </tr>
+            </table>
+            <br />
+            <div class="nonrispondo">
+              <button class="btn btn-outline-secondary btn-lg" onclick="rimuoviRSselect('select5','select6','select7','select8');">
+                Non rispondo
+              </button>
+              <button class="btn btn-outline-primary btn-lg" onclick="cambia('#quesitotab9',80);">
+                Indietro < </button> <button class="btn btn-outline-primary btn-lg" onclick="valuta();">
+                  Conferma e Valuta
+              </button>
+            </div>
+          </div>
+          <!-- Barra -->
+          <p class="scritta-progresso" style="margin-left: 60px;height: 20px">Completato al:</p>
+          <div class="progress" style="text-align:center;margin-top: 22px;margin-right: 60px" id="barra">
+            <div class="progress-bar progress-bar-animated progress-bar-striped" role="progressbar" style="width: 10%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">10%</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+<!-- Finestra Modale-->
+  <div class="modal fade" id="dialogo">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Risultato del Test</h4>
+          <button type="button" class="close" data-dismiss="modal">
+            &times;
+          </button>
+        </div>
+        <div class="modal-body" id="visore"></div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary btn-lg" data-dismiss="modal">Chiudi</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+</html>

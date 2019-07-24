@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<!--
+             Alunno: Elio Gargiulo
+             Classe: 5^DIN
+
+    Anno scolastico: 2019/2020
+               Data: 24/07/2019
+-->
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <title>Quesito ad associazione di risposte</title>
+  <style type="text/css">
+
+    h1 {
+      text-align: center;
+    }
+
+    .nonrispondo {
+      text-align: right;
+      float: right;
+    }
+
+    table.tab-risposte {
+      margin-left: 5%;
+    }
+
+    table.tab-risposte td {
+      padding: 0.5rem 1rem;
+    }
+
+    .valuta {
+      margin-top: 2rem;
+      text-align: center;
+    }
+
+    .marginetop{
+        margin-top: 20px;
+    }
+
+    .marginebottom{
+        margin-bottom: 20px;
+    }
+
+    .immagine{
+      display: block;
+      margin: auto;
+    }
+
+  </style>
+  <script type="text/javascript">
+
+    function rimuoviAR(s1,s2,s3,s4) {
+
+      var select1 = document.getElementById(s1);
+      var select2 = document.getElementById(s2);
+      var select3 = document.getElementById(s3);
+      var select4 = document.getElementById(s4);
+
+      select1[0].selected = true;
+      select2[0].selected = true;
+      select3[0].selected = true;
+      select4[0].selected = true;
+
+    }
+
+    function puntiAR(arraySelect, rispGiuste) {
+
+      var select1 = document.getElementById(arraySelect[0]);
+      var select2 = document.getElementById(arraySelect[1]);
+      var select3 = document.getElementById(arraySelect[2]);
+      var select4 = document.getElementById(arraySelect[3]);
+      var corrette = 0;
+      if (select1.options[select1.selectedIndex].value == rispGiuste[0])
+        corrette++;
+      if (select2.options[select2.selectedIndex].value == rispGiuste[1])
+        corrette++;
+      if (select3.options[select3.selectedIndex].value == rispGiuste[2])
+        corrette++;
+      if (select4.options[select4.selectedIndex].value == rispGiuste[3])
+        corrette++;
+
+      var punti = 0;
+      if (corrette == 4)
+        punti = 1;
+
+      return punti;
+    }
+
+    function valuta() {
+      const MAX_PUNTI = 1;
+      var arraySelect = ["select1", "select2", "select3", "select4"];
+      var corretteSelect = ["C", "B", "E", "A"];
+      var totale = puntiAR(arraySelect, corretteSelect);
+      var v = document.getElementById("visore");
+      v.innerHTML = "<p>Punteggio ottenuto: <strong>" + totale +"/" + MAX_PUNTI + "</strong></p>";
+      $('#dialogo').modal('show');
+    }
+
+  </script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+
+<body>
+  <div class="container shadow">
+    <h1 class="marginetop">Quesito ad associazione di risposte</h1>
+    <form name="test" style="margin-left:25px;margin-right:25px;">
+      <h2>Quesito n. 1</h2>
+      <p class="nonrispondo">
+        <button type="button" class="btn btn-secondary btn-sm" onclick="rimuoviAR('select1','select2','select3','select4');">Non rispondo</button>
+      </p>
+      <div class="testo">
+        <p>
+          Considera le seguenti definizioni:<br><br>
+          &nbsp;1. Quadrilatero con tutti i lati e tutti gli angoli congruenti<br>
+          &nbsp;2. Quadrilatero con tutti i lati congruenti<br>
+          &nbsp;3. Quadrilatero con due lati paralleli <br>
+          &nbsp;4. Quadrilatero con tutti gli angoli congruenti tra loro<br>
+          &nbsp;5. Quadrilatero con i lati opposti paralleli<br>
+          <br>
+
+          Associa le definizioni alle seguenti figure geometriche (è presente una definizione extra che non deve essere utilizzata):
+        </p>
+      </div>
+      <table class="tab-risposte">
+        <tr>
+          <td><select id="select1">
+              <option disabled selected value>Seleziona</option>
+              <option value="A">1</option>
+              <option value="B">2</option>
+              <option value="C">3</option>
+              <option value="D">4</option>
+              <option value="E">5</option>
+            </select></td>
+          <td>Trapezio</td>
+        </tr>
+        <tr>
+          <td><select id="select2">
+              <option disabled selected value>Seleziona</option>
+              <option value="A">1</option>
+              <option value="B">2</option>
+              <option value="C">3</option>
+              <option value="D">4</option>
+              <option value="E">5</option>
+            </select></td>
+          <td>Rombo</td>
+        </tr>
+        <tr>
+          <td><select id="select3">
+              <option disabled selected value>Seleziona</option>
+              <option value="A">1</option>
+              <option value="B">2</option>
+              <option value="C">3</option>
+              <option value="D">4</option>
+              <option value="E">5</option>
+            </select></td>
+          <td>Parallelogramma</td>
+        </tr>
+        <tr>
+          <td><select id="select4">
+              <option disabled selected value>Seleziona</option>
+              <option value="A">1</option>
+              <option value="B">2</option>
+              <option value="C">3</option>
+              <option value="D">4</option>
+              <option value="E">5</option>
+            </select></td>
+          <td>Quadrato</td>
+        </tr>
+
+      </table>
+    </form>
+    <p class="valuta"><button type="button" class="btn btn-primary marginebottom" onclick="valuta();">Valuta risposte</button>
+    </p>
+  </div>
+  <div class="modal" id="dialogo">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Risultato del test</h4>
+          <button type="button" class="close" data-dismiss="modal">
+            &times;
+          </button>
+        </div>
+        <div class="modal-body" id="visore"></div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-dismiss="modal">Chiudi</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+
+</html>

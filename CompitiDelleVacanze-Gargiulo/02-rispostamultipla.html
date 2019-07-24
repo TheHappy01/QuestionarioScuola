@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<!--
+             Alunno: Elio Gargiulo
+             Classe: 5^DIN
+
+    Anno scolastico: 2019/2020
+               Data: 24/07/2019
+-->
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <title>Quesito a risposta multipla</title>
+  <style type="text/css">
+
+    h1 {
+      text-align: center;
+    }
+
+    .nonrispondo {
+      text-align: right;
+      float: right;
+    }
+
+    table.tab-risposte {
+      margin-left: 5%;
+    }
+
+    table.tab-risposte td {
+      padding: 0.5rem 1rem;
+    }
+
+    .valuta {
+      margin-top: 2rem;
+      text-align: center;
+    }
+
+    .marginetop{
+        margin-top: 20px;
+    }
+
+    .marginebottom{
+        margin-bottom: 20px;
+    }
+
+    .immagine{
+      display: block;
+      margin: auto;
+    }
+
+  </style>
+  <script type="text/javascript">
+
+    function rimuoviRM(nomeRisposte) {
+      var cbox = document.getElementsByName(nomeRisposte);
+      for (var i = 0; i < cbox.length; i++) {
+        cbox[i].checked = false;
+      }
+    }
+
+    function puntiRM(nomeRisposte, rispEsatta) {
+      var risposte = rispEsatta.split("-");
+      var alternative = 5;
+      var checkbox = document.getElementsByName(nomeRisposte);
+      var corrette = 0;
+      var sbagliate = 0;
+      var nulla = 0;
+      for (var i = 0; i < checkbox.length; i++) {
+        if (checkbox[i].checked) {
+          var errata = true;
+          for (var j = 0; j < risposte.length; j++) {
+            if (checkbox[i].value == risposte[j]) {
+              corrette++;
+              errata = false;
+            }
+          }
+          if (errata == true)
+            sbagliate++;
+        } else
+          nulla++;
+      }
+      var punti;
+      if (nulla == alternative)
+        punti = 0;
+      else if (corrette == 2 && sbagliate == 0)
+        punti = 1.5;
+      else if (corrette == 2 && sbagliate == 1 || corrette == 1 && sbagliate == 1)
+        punti = 1;
+      else if (corrette == 2 && sbagliate == 2 || corrette == 1 && sbagliate == 2)
+        punti = 0.5;
+      else
+        punti = -0.25
+      return punti
+    }
+
+    function valuta() {
+      const MAX_PUNTI = 1.5;
+      var totale = puntiRM("c1", "A-D");
+      var v = document.getElementById("visore");
+      v.innerHTML = "<p>Punteggio ottenuto: <strong>" + totale +
+        "/" + MAX_PUNTI + "</strong></p>";
+      $('#dialogo').modal('show');
+    }
+
+  </script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+
+<body>
+  <div class="container shadow">
+    <h1 class="marginetop">Quesito a risposta multipla</h1>
+    <form name="test" style="margin-left:25px;margin-right:25px;">
+      <h2>Quesito n. 1</h2>
+      <p class="nonrispondo">
+        <button type="button" class="btn btn-secondary btn-sm" onclick="rimuoviRM('c1');">Non rispondo</button>
+      </p>
+      <div class="testo">
+        <p>
+          Osserva gli angoli disegnati nella figura.<br>
+          <img src="angoli.gif" class="immagine" >
+          É possibile affermare che:
+        </p>
+      </div>
+      <table class="tab-risposte">
+        <tr>
+          <td><input type="checkbox" name="c1" value="A" /></td>
+          <td>A è minore di B</td>
+        </tr>
+        <tr>
+          <td><input type="checkbox" name="c1" value="B" /></td>
+          <td>C è maggiore di D</td>
+        </tr>
+        <tr>
+          <td><input type="checkbox" name="c1" value="C" /></td>
+          <td>E è uguale a F</td>
+        </tr>
+        <tr>
+          <td><input type="checkbox" name="c1" value="D" /></td>
+          <td>B è maggiore di F</td>
+        </tr>
+        <tr>
+          <td><input type="checkbox" name="c1" value="E" /></td>
+          <td>E è minore di C</td>
+        </tr>
+      </table>
+    </form>
+    <p class="valuta"><button type="button" class="btn btn-primary marginebottom" onclick="valuta();">Valuta risposte</button>
+    </p>
+  </div>
+  <div class="modal" id="dialogo">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Risultato del test</h4>
+          <button type="button" class="close" data-dismiss="modal">
+            &times;
+          </button>
+        </div>
+        <div class="modal-body" id="visore"></div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-dismiss="modal">Chiudi</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+
+</html>
